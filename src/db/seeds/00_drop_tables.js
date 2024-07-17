@@ -1,9 +1,10 @@
-module.exports.seed = function (knex) {
-  // Deletes ALL existing entries
-  return knex("reviews")
-    .del()
-    .then(() => knex("movies_theaters").del())
-    .then(() => knex("critics").del())
-    .then(() => knex("movies").del())
-    .then(() => knex("theaters").del());
+module.exports.seed = async function (knex) {
+  const tableNames = ["reviews", "movies_theaters", "critics", "movies", "theaters"];
+  for (const table of tableNames) {
+    const exists = await knex.schema.hasTable(table);
+    if (exists) {
+      await knex(table).del();
+    }
+  }
 };
+

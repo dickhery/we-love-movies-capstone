@@ -4,6 +4,9 @@
   "description": "zid-be-project-movie-01-qualified",
   "main": "src/app.js",
   "scripts": {
+    "test:migrate": "knex migrate:latest --env test",
+    "test:rollback": "knex migrate:rollback --env test",
+    "test:reset": "npm run test:rollback && npm run test:migrate && knex seed:run --env test",
     "docker:build": "docker image build . -t thinkful-ed/zid-be-project-movie-01-qualified",
     "docker:run": "docker run --rm -it -p 5001:5001 thinkful-ed/zid-be-project-movie-01-qualified",
     "docker:stop": "docker stop $(docker ps -q)",
