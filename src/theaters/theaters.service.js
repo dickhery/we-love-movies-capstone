@@ -12,12 +12,9 @@ const reduceMovies = reduceProperties("theater_id", {
 
 async function list() {
   return db("theaters")
-    .join(
-      "movies_theaters",
-      "movies_theaters.theater_id",
-      "theaters.theater_id"
-    )
+    .join("movies_theaters", "theaters.theater_id", "movies_theaters.theater_id")
     .join("movies", "movies.movie_id", "movies_theaters.movie_id")
+    .select("theaters.*", "movies.*", "movies_theaters.is_showing")
     .then(reduceMovies);
 }
 
