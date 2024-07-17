@@ -25,12 +25,42 @@ async function listTheaters(movie_id) {
 }
 
 async function listReviews(movie_id) {
-  return db("reviews")
+  const reviews = await db("reviews")
     .join("critics", "reviews.critic_id", "critics.critic_id")
-    .select("reviews.*", "critics.*")
-    .where({ "reviews.movie_id": movie_id })
-    .then((reviews) => reviews.map(setCritic));
+    .select(
+      "reviews.*",
+      "critics.critic_id as critic:critic_id",
+      "critics.preferred_name as critic:preferred_name",
+      "critics.surname as critic:surname",
+      "critics.organization_name as critic:organization_name",
+      "critics.created_at as critic:created_at",
+      "critics.updated_at as critic:updated_at"
+    )
+    .where({ "reviews.movie_id": movie_id });
+
+  return reviews.map((review) => {
+    const critic = {
+      critic_id: review["critic:critic_id"],
+      preferred_name: review["critic:preferred_name"],
+      surname: review["critic:surname"],
+      organization_name: review["critic:organization_name"],
+      created_at: review["critic:created_at"],
+      updated_at: review["critic:updated_at"],
+    };
+
+    return {
+      review_id: review.review_id,
+      content: review.content,
+      score: review.score,
+      critic_id: review.critic_id,
+      movie_id: review.movie_id,
+      created_at: review.created_at,
+      updated_at: review.updated_at,
+      critic,
+    };
+  });
 }
+
 
 async function readCritic(critic_id) {
   return db("critics").where({ critic_id }).first();
